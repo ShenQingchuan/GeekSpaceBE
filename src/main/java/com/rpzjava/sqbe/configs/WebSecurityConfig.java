@@ -3,9 +3,7 @@ package com.rpzjava.sqbe.configs;
 import com.rpzjava.sqbe.utils.RedisUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.ServletOutputStream;
@@ -44,8 +42,8 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration addInterceptor = registry.addInterceptor(getSecurityInterceptor());
         List<String> list = new ArrayList<>();
-        list.add("/user/");//放行新增用户接口地址
-        list.add("/user/login");//放行登陆接口地址
+        list.add("/user/"); // 放行新增用户接口地址
+        list.add("/login"); // 放行登陆接口地址
         addInterceptor.excludePathPatterns(list);
         addInterceptor.addPathPatterns("/**");//拦截所有请求
     }
@@ -75,4 +73,5 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
             return false;//拦截
         }
     }
+
 }

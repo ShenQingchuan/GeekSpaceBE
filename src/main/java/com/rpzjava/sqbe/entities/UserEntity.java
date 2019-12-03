@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -20,15 +19,18 @@ import java.util.Date;
 public class UserEntity implements Serializable {
 
     @Id
-    @GenericGenerator(name="uidGenerator", strategy="uuid") //这个是hibernate的注解/生成32位UUID
-    @GeneratedValue(generator="uidGenerator")
-    String uid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long uid;
 
     @Column(nullable = false, unique = true)
     String sicnuid;
 
     @Column(nullable = false)
     String password;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "userProfile", referencedColumnName = "id")
+    UserProfile userProfile;
 
     @CreationTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -37,6 +39,4 @@ public class UserEntity implements Serializable {
     @UpdateTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateDate;
-
-    String name;
 }
