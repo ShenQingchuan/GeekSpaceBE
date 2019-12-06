@@ -44,6 +44,8 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
         List<String> list = new ArrayList<>();
         list.add("/user/"); // 放行新增用户接口地址
         list.add("/login"); // 放行登陆接口地址
+        list.add("/release/save");//放行发布帖子接口地址
+        list.add("/release/display");//方行广场展示帖子接口地址
         addInterceptor.excludePathPatterns(list);
         addInterceptor.addPathPatterns("/**");//拦截所有请求
     }

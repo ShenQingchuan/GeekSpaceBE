@@ -1,7 +1,6 @@
 package com.rpzjava.sqbe.controllers;
 
 import com.alibaba.fastjson.JSONObject;
-import com.rpzjava.sqbe.daos.IUserDAO;
 import com.rpzjava.sqbe.entities.UserEntity;
 import com.rpzjava.sqbe.entities.UserProfile;
 import com.rpzjava.sqbe.utils.ResultUtils;
@@ -10,6 +9,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -17,9 +17,9 @@ import java.util.List;
 @Slf4j
 public class UserController {
 
-    private final IUserDAO IUserDAO;
+    private final com.rpzjava.sqbe.daos.IUserDAO IUserDAO;
 
-    public UserController(IUserDAO IUserDAO) {
+    public UserController(com.rpzjava.sqbe.daos.IUserDAO IUserDAO) {
         this.IUserDAO = IUserDAO;
     }
 
@@ -33,6 +33,13 @@ public class UserController {
         String sicnuid = jsonObject.get("sicnuid").toString();
         String name = jsonObject.get("name").toString();
         String password = jsonObject.get("password").toString();
+        //新增判断:用户是否已经存在
+        Optional<UserEntity> userEntitySrc = IUserDAO.findBySicnuid(sicnuid); // 在数据库空查询该学号
+        if (userEntitySrc.isPresent()) { // 判断用户是否存在
+            //返回给前端
+            //......
+            return ResultUtils.error("用户已存在！");
+        }
 
         // 川师学号
         userEntity.setSicnuid(sicnuid);
@@ -49,7 +56,6 @@ public class UserController {
             log.info("成功添加一名用户: " + "<" + sicnuid + ">.");
             return ResultUtils.success("操作成功!");
         }
-
         return ResultUtils.error("操作失败!");
     }
 
