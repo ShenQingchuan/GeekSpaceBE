@@ -12,23 +12,20 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public
-class UserProfile implements Serializable {
+public class UserProfile implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;                  // 用户详细信息记录的主键
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "userProfile")
-    UserEntity userEntity;
-
     String trueName;            // 用户真实姓名
     String nickName;            // 用户在社区的昵称
+    Integer sex;                // 用户性别 0女 1男
 
     @Column(length = 50)
     String bio;                 // 用户的一句话简介
 
     String email;               // 用户的邮件地址
-    int teapo;                  // 用户的茶点积分
+    Integer teapo;              // 用户的茶点积分
 
 }

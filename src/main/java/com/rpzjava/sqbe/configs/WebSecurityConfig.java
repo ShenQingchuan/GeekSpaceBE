@@ -1,5 +1,6 @@
 package com.rpzjava.sqbe.configs;
 
+import com.rpzjava.sqbe.utils.JwtUtils;
 import com.rpzjava.sqbe.utils.RedisUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,12 +8,14 @@ import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,6 +25,10 @@ import java.util.List;
 public class WebSecurityConfig extends WebMvcConfigurationSupport {
 
     private final RedisUtils redisUtils;
+    private final String[] whiteList = new String[]{
+            "/user/", "/user/all", "/user/*",
+            "/login",
+    };
 
     public WebSecurityConfig(RedisUtils redisUtils) {
         this.redisUtils = redisUtils;
@@ -41,11 +48,11 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
      */
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration addInterceptor = registry.addInterceptor(getSecurityInterceptor());
-        List<String> list = new ArrayList<>();
-        list.add("/user/"); // 放行新增用户接口地址
-        list.add("/login"); // 放行登陆接口地址
-        addInterceptor.excludePathPatterns(list);
-        addInterceptor.addPathPatterns("/**");//拦截所有请求
+        List<String> passList = new ArrayList<>();
+        Collections.addAll(passList, whiteList);
+        addInterceptor.excludePathPatterns(passList);
+
+        addInterceptor.addPathPatterns("/**");//拦截其他所有请求
     }
 
     private class SecurityInterceptor extends HandlerInterceptorAdapter {
@@ -56,18 +63,26 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
             ServletOutputStream out = response.getOutputStream();//创建一个输出流
             OutputStreamWriter ow = new OutputStreamWriter(out, StandardCharsets.UTF_8);//设置编码格式,防止汉字乱码
-            String token = request.getHeader("token");//获取 Token
-            if (token != null) {//判断 Token 是否为空
-                if (redisUtils.hasKey(token)) {//判断 Token 是否存在
-                    redisUtils.expire(token, 60); //如果 Token 存在 重新赋予过期时间 并放行
-                    return true;
+
+            Cookie[] cookies = request.getCookies();//获取 Token
+            if (request.getCookies() != null) {
+                for (Cookie c : cookies) {
+                    if (c.getName().equals("gssq_token")) { //判断 Token Cookie 是否存在
+                        if (redisUtils.hasKey(c.getValue())) {
+                            redisUtils.expire(c.getValue(), JwtUtils.TOKEN_EXPIRE_TIME); //如果 Token 存在 重新刷新过期时间 并放行
+                            return true;
+                        } else {
+                            ow.write("token is invalid!");//要返回的信息
+                            ow.flush();//冲刷出流，将所有缓冲的数据发送到目的地
+                            ow.close();//关闭流
+                            return false;
+                        }
+                    }
                 }
-                ow.write("token错误，请重新登录");//要返回的信息
-                ow.flush();//冲刷出流，将所有缓冲的数据发送到目的地
-                ow.close();//关闭流
-                return false;//拦截
             }
-            ow.write("token为空，请重新登录");//要返回的信息
+
+            // 遍历完毕也没找到则报空
+            ow.write("token is empty, please sign in!");//要返回的信息
             ow.flush();//冲刷出流，将所有缓冲的数据发送到目的地
             ow.close();//关闭流
             return false;//拦截
