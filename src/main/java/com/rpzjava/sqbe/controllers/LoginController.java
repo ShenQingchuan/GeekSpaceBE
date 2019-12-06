@@ -45,12 +45,13 @@ public class LoginController {
         String sicnuid = jsonObject.get("sicnuid").toString();
         String password = jsonObject.get("password").toString();
 
-        Optional<UserEntity> userEntitySrc = IUserDAO.findBySicnuid(sicnuid); // 数据库中的密码
+        Optional<UserEntity> userEntitySrc = IUserDAO.findOneBySicnuid(sicnuid); // 数据库中的密码
         if (userEntitySrc.isPresent()) { // 判断用户是否存在
             if (DigestUtils.md5DigestAsHex(password.getBytes()).equals(userEntitySrc.get().getPassword())) { // 校验密码是否一致
 
                 String token = JwtUtils.genJsonWebToken(userEntitySrc.get()); // 得到 Token
-                redisUtils.set(token, userEntitySrc.get().getSicnuid(), 60); // 登录成功后 把token放到Redis Key 存 token ，value 存用户sicnuid
+                // 登录成功后 把token放到Redis Key 存 token ，value 存用户sicnuid
+                redisUtils.set(token, userEntitySrc.get().getSicnuid(), JwtUtils.TOKEN_EXPIRE_TIME);
 
                 //登陆成功后 把token和真实姓名返回
                 Map<String, Object> map = new HashMap<>();

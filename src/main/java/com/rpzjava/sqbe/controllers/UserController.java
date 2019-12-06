@@ -1,5 +1,7 @@
 package com.rpzjava.sqbe.controllers;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rpzjava.sqbe.daos.IUserDAO;
 import com.rpzjava.sqbe.entities.UserEntity;
@@ -10,6 +12,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -17,10 +20,10 @@ import java.util.List;
 @Slf4j
 public class UserController {
 
-    private final IUserDAO IUserDAO;
+    private final IUserDAO iUserDAO;
 
-    public UserController(IUserDAO IUserDAO) {
-        this.IUserDAO = IUserDAO;
+    public UserController(IUserDAO iUserDAO) {
+        this.iUserDAO = iUserDAO;
     }
 
     /**
@@ -43,26 +46,43 @@ public class UserController {
         userProfile.setTrueName(name);
         userEntity.setUserProfile(userProfile);
         // 新增用户 这里调用 Spring Data JPA 自带方法进行新增
-        UserEntity save = IUserDAO.save(userEntity);
+        UserEntity save = iUserDAO.save(userEntity);
         // 如果不等于 null 返回我们刚刚定义好的工具类
         if (save != null) {
             log.info("成功添加一名用户: " + "<" + sicnuid + ">.");
-            return ResultUtils.success("操作成功!");
+            return ResultUtils.success("注册成功!");
         }
 
         return ResultUtils.error("操作失败!");
     }
 
     /**
-     * 获取所有用户
+     * 按 uid 信息查询用户
      */
-    @GetMapping("/findAll")
+    @GetMapping("/{id}")
+    public Object findByToken(@PathVariable String id) {
+        Long uid = Long.parseLong(id);
+        Optional<UserEntity> foundUser = iUserDAO.findByUid(uid);
+        if (foundUser.isPresent()) {
+            return ResultUtils.success(JSON.toJSON(foundUser));
+        }
+        return ResultUtils.error("没有找到 uid: "+ uid + " 的用户");
+    }
+
+
+    /**
+     * （分页查询）获取所有用户
+     */
+    @GetMapping("/all")
     public Object findAll() {
-        List<UserEntity> all = IUserDAO.findAll();
+        List<UserEntity> all = iUserDAO.findAll();
         for (UserEntity temp : all) {
             temp.setPassword(null);//对密码进行过滤
         }
-        return all;
+        return ResultUtils.success(
+            JSONArray.parseArray(JSON.toJSONString(all)),
+            "获取用户列表成功"
+        );
     }
 
 }
