@@ -36,6 +36,12 @@ public class UserController {
         String sicnuid = jsonObject.get("sicnuid").toString();
         String name = jsonObject.get("name").toString();
         String password = jsonObject.get("password").toString();
+        //新增判断:用户是否已经存在
+        Optional<UserEntity> userEntitySrc = iUserDAO.findOneBySicnuid(sicnuid); // 在数据库空查询该学号
+        if (userEntitySrc.isPresent()) { // 判断用户是否存在
+            //返回给前端
+            return ResultUtils.error("用户已存在！");
+        }
 
         // 川师学号
         userEntity.setSicnuid(sicnuid);
