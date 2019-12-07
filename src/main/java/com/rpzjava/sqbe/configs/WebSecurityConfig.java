@@ -67,7 +67,7 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
             Cookie[] cookies = request.getCookies();//获取 Token
             if (request.getCookies() != null) {
                 for (Cookie c : cookies) {
-                    if (c.getName().equals("gssq_token")) { //判断 Token Cookie 是否存在
+                    if (c.getName().equals("gssq_token")) { //找到 Token Cookie
                         if (redisUtils.hasKey(c.getValue())) {
                             redisUtils.expire(c.getValue(), JwtUtils.TOKEN_EXPIRE_TIME); //如果 Token 存在 重新刷新过期时间 并放行
                             return true;
