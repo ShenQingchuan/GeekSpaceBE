@@ -36,6 +36,12 @@ public class UserController {
         String sicnuid = jsonObject.get("sicnuid").toString();
         String name = jsonObject.get("name").toString();
         String password = jsonObject.get("password").toString();
+        //新增判断:用户是否已经存在
+        Optional<UserEntity> userEntitySrc = iUserDAO.findOneBySicnuid(sicnuid); // 在数据库空查询该学号
+        if (userEntitySrc.isPresent()) { // 判断用户是否存在
+            //返回给前端
+            return ResultUtils.error("用户已存在！");
+        }
 
         // 川师学号
         userEntity.setSicnuid(sicnuid);
@@ -44,6 +50,9 @@ public class UserController {
         // 为此用户新增一个信息表
         UserProfile userProfile = new UserProfile();
         userProfile.setTrueName(name);
+        userProfile.setNickName(name);  //默认昵称为真实姓名，待用户自行修改
+        userProfile.setSex(1);          //默认资料性别为 1（男性）
+        userProfile.setBio("这个人好懒，什么也没留下！");
         userEntity.setUserProfile(userProfile);
         // 新增用户 这里调用 Spring Data JPA 自带方法进行新增
         UserEntity save = iUserDAO.save(userEntity);
@@ -60,11 +69,13 @@ public class UserController {
      * 按 uid 信息查询用户
      */
     @GetMapping("/{id}")
-    public Object findByToken(@PathVariable String id) {
+    public Object findByUserId(@PathVariable String id) {
         Long uid = Long.parseLong(id);
         Optional<UserEntity> foundUser = iUserDAO.findByUid(uid);
         if (foundUser.isPresent()) {
-            return ResultUtils.success(JSON.toJSON(foundUser));
+            UserEntity temp = foundUser.get();
+            temp.setPassword(null);
+            return ResultUtils.success(JSON.toJSON(temp));
         }
         return ResultUtils.error("没有找到 uid: "+ uid + " 的用户");
     }

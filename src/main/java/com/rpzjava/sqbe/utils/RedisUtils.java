@@ -37,6 +37,15 @@ public class RedisUtils {
     }
 
     /**
+     * redis根据key删除值
+     *
+     * @param key   键
+     */
+    public void remove(String key) {
+        redisUtils.redisTemplate.delete(key);
+    }
+
+    /**
      * redis存入数据
      *
      * @param key   键

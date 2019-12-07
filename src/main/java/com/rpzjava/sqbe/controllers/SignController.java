@@ -9,12 +9,10 @@ import com.rpzjava.sqbe.utils.RedisUtils;
 import com.rpzjava.sqbe.utils.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,13 +21,13 @@ import java.util.Optional;
 @RestController
 @CrossOrigin
 @Slf4j
-public class LoginController {
+public class SignController {
 
     private final IUserDAO IUserDAO;
 
     private final RedisUtils redisUtils;
 
-    public LoginController(IUserDAO IUserDAO, RedisUtils redisUtils) {
+    public SignController(IUserDAO IUserDAO, RedisUtils redisUtils) {
         this.IUserDAO = IUserDAO;
         this.redisUtils = redisUtils;
     }
@@ -51,7 +49,7 @@ public class LoginController {
 
                 String token = JwtUtils.genJsonWebToken(userEntitySrc.get()); // 得到 Token
                 // 登录成功后 把token放到Redis Key 存 token ，value 存用户sicnuid
-                redisUtils.set(token, userEntitySrc.get().getSicnuid(), JwtUtils.TOKEN_EXPIRE_TIME);
+                redisUtils.set(token, userEntitySrc.get().getUid().toString(), JwtUtils.TOKEN_EXPIRE_TIME);
 
                 //登陆成功后 把token和真实姓名返回
                 Map<String, Object> map = new HashMap<>();
@@ -67,5 +65,24 @@ public class LoginController {
             return ResultUtils.error("该学号不存在");
         }
 
+    }
+
+    /**
+     * 登出接口
+     */
+    @GetMapping("/logout")
+    public Object logout(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();//获取 Token
+        if (request.getCookies() != null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals("gssq_token")) { //找到 Token Cookie
+                    if (redisUtils.hasKey(c.getValue())) {
+                        redisUtils.remove(c.getValue());
+                        break;
+                    }
+                }
+            }
+        }
+        return ResultUtils.success("退出登录完成！");
     }
 }
