@@ -31,6 +31,7 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
      * 注入Bean 让 Spring 扫描 SecurityInterceptor
      * 不然过滤器不起作用
      */
+
     @Bean
     public SecurityInterceptor getSecurityInterceptor() {
         return new SecurityInterceptor();
@@ -46,6 +47,8 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
         list.add("/login"); // 放行登陆接口地址
         list.add("/release/save");//放行发布帖子接口地址
         list.add("/release/display");//方行广场展示帖子接口地址
+        list.add("/update/static_data");//方行修改静态资料接口地址
+        list.add("/update/dynamic_data");//方行修改动态资料接口地址
         addInterceptor.excludePathPatterns(list);
         addInterceptor.addPathPatterns("/**");//拦截所有请求
     }

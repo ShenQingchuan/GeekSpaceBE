@@ -28,7 +28,14 @@ class UserProfile implements Serializable {
     @Column(length = 50)
     String bio;                 // 用户的一句话简介
 
-    String email;               // 用户的邮件地址
-    int teapo;                  // 用户的茶点积分
+    @Column(length = 2)
+    String sex;
+
+    int teaPoint;                  // 用户的茶点积分
+
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition="longblob")
+    byte[] avatar;              //头像
 
 }

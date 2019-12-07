@@ -27,7 +27,12 @@ public class UserPost implements Serializable {
     @Column(nullable = false)
     String title;            // 帖子标题
 
-    @Column(columnDefinition = "text")
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition="longblob")
+    byte[] cover;              //头像
+
+    @Column(columnDefinition = "text",nullable = false)
     String description;      // 帖子内容
 
     @CreationTimestamp
