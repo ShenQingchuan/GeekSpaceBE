@@ -27,8 +27,9 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
     private final RedisUtils redisUtils;
     private final String[] whiteList = new String[]{
             "/user/", "/user/all", "/user/*",
-            "/login",
-    };
+            "/login","/release/save","/release/display",
+            "/update/static_data","/update/dynamic_data"
+};
 
     public WebSecurityConfig(RedisUtils redisUtils) {
         this.redisUtils = redisUtils;
@@ -38,6 +39,7 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
      * 注入Bean 让 Spring 扫描 SecurityInterceptor
      * 不然过滤器不起作用
      */
+
     @Bean
     public SecurityInterceptor getSecurityInterceptor() {
         return new SecurityInterceptor();
@@ -48,11 +50,12 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
      */
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration addInterceptor = registry.addInterceptor(getSecurityInterceptor());
+
         List<String> passList = new ArrayList<>();
         Collections.addAll(passList, whiteList);
         addInterceptor.excludePathPatterns(passList);
-
         addInterceptor.addPathPatterns("/**");//拦截其他所有请求
+
     }
 
     private class SecurityInterceptor extends HandlerInterceptorAdapter {

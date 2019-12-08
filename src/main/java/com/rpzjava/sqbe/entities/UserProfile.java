@@ -20,13 +20,14 @@ public class UserProfile implements Serializable {
 
     String trueName;            // 用户真实姓名
     String nickName;            // 用户在社区的昵称
+
+    @Column(length = 2)
     Integer sex;                // 用户性别 0女 1男
 
     @Column(length = 50)
     String bio;                 // 用户的一句话简介
-    String avatarUrl;           // 用户头像地址
 
-    String email;               // 用户的邮件地址
-    Integer teapo;              // 用户的茶点积分
+    @Column(length = 50)
+    String avatarUrl;           // 用户头像地址
 
 }
