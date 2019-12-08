@@ -30,7 +30,7 @@ public class UserPost implements Serializable {
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(columnDefinition="longblob")
-    byte[] cover;              //头像
+    byte[] cover;              //封面图
 
     @Column(columnDefinition = "text",nullable = false)
     String description;      // 帖子内容

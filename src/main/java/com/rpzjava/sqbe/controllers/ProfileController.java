@@ -1,5 +1,6 @@
 package com.rpzjava.sqbe.controllers;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rpzjava.sqbe.daos.IProfileDao;
 import com.rpzjava.sqbe.daos.IUserDAO;
@@ -7,12 +8,11 @@ import com.rpzjava.sqbe.entities.UserEntity;
 import com.rpzjava.sqbe.entities.UserProfile;
 import com.rpzjava.sqbe.utils.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Transaction;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/update")
@@ -45,20 +45,31 @@ public class ProfileController {
         return ResultUtils.error("修改失败！");
     }
 
-    @GetMapping("/dynamic_data") //修改点赞数
-    public int updateDynamic(@RequestBody JSONObject jsonObject){
-        String sicnuid = jsonObject.get("sicnuid").toString();
-        boolean pointStatus = (boolean) jsonObject.get("status");//知晓修改操作是增加还是删除
+//    @GetMapping("/dynamic_data") //修改点赞数
+//    public int updateDynamic(@RequestBody JSONObject jsonObject){
+//        String sicnuid = jsonObject.get("sicnuid").toString();
+//        boolean pointStatus = (boolean) jsonObject.get("status");//知晓修改操作是增加还是删除
+//
+//        int currentPoints = IUserDAO.findBySicnuid(sicnuid).get().getUserProfile().getTeaPoint();//获取当前改用户的teaPoint值
+//
+//        if (!pointStatus) {
+//            if (currentPoints != 0){//当point数为0时不会修改值
+//                IProfileDao.reduceTeaPoint(sicnuid);
+//            }
+//        }else {
+//            IProfileDao.addTeaPoint(sicnuid);
+//        }
+//        return IUserDAO.findBySicnuid(sicnuid).get().getUserProfile().getTeaPoint();//返回修改后的teaPoint值
+//    }
 
-        int currentPoints = IUserDAO.findBySicnuid(sicnuid).get().getUserProfile().getTeaPoint();//获取当前改用户的teaPoint值
-
-        if (!pointStatus) {
-            if (currentPoints != 0){//当point数为0时不会修改值
-                IProfileDao.reduceTeaPoint(sicnuid);
-            }
-        }else {
-            IProfileDao.addTeaPoint(sicnuid);
+    @GetMapping("/{id}")
+    public Object findProfileById(@PathVariable String id) {
+        Long uid = Long.parseLong(id);
+        Optional<UserProfile> foundProfile = iProfileDAO.findById(uid);
+        if (foundProfile.isPresent()) {
+            return ResultUtils.success(JSON.toJSON(foundProfile.get()), "获取用户资料成功");
         }
-        return IUserDAO.findBySicnuid(sicnuid).get().getUserProfile().getTeaPoint();//返回修改后的teaPoint值
+        return ResultUtils.error("没有找到 uid:" + uid + " 用户的资料");
     }
+
 }
