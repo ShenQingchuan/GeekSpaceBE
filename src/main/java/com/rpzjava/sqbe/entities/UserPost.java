@@ -27,10 +27,12 @@ public class UserPost implements Serializable {
     @Column(nullable = false)
     String title;            // 帖子标题
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    @Column(columnDefinition="longblob")
-    byte[] cover;              //封面图
+//    @Lob
+//    @Basic(fetch = FetchType.LAZY)
+//    @Column(columnDefinition="longblob")
+//    byte[] cover;              //封面图
+    @Column(length = 50)
+    String coverUrl;           // 封面图地址
 
     @Column(columnDefinition = "text",nullable = false)
     String description;      // 帖子内容

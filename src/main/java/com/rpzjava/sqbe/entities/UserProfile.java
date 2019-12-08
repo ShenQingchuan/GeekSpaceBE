@@ -24,9 +24,10 @@ public class UserProfile implements Serializable {
     @Column(length = 2)
     Integer sex;                // 用户性别 0女 1男
 
-
     @Column(length = 50)
     String bio;                 // 用户的一句话简介
+
+    @Column(length = 50)
     String avatarUrl;           // 用户头像地址
 
 }
