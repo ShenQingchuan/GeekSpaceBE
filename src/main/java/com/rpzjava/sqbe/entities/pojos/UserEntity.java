@@ -30,7 +30,7 @@ public class UserEntity implements Serializable {
     @JSONField(serialize = false)
     String password;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)//级联操作
     @JoinColumn(name = "userProfile", referencedColumnName = "id")
     UserProfile userProfile;
 

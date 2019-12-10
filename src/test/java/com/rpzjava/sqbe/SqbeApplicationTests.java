@@ -1,7 +1,7 @@
 package com.rpzjava.sqbe;
 
 import com.alibaba.fastjson.JSON;
-import com.rpzjava.sqbe.daos.IPostDao;
+import com.rpzjava.sqbe.daos.IPostDAO;
 import com.rpzjava.sqbe.daos.ITagDAO;
 import com.rpzjava.sqbe.daos.IUserDAO;
 import com.rpzjava.sqbe.entities.pojos.Post;
@@ -25,7 +25,7 @@ class SqbeApplicationTests {
     @Autowired
     IUserDAO iUserDAO;
     @Autowired
-    IPostDao iPostDao;
+    IPostDAO iPostDao;
 
     @Deprecated  // 此测试已经做过
     @Test

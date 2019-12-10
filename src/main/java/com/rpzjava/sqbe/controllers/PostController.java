@@ -2,7 +2,7 @@ package com.rpzjava.sqbe.controllers;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.rpzjava.sqbe.daos.IPostDao;
+import com.rpzjava.sqbe.daos.IPostDAO;
 import com.rpzjava.sqbe.exceptions.PostDataNotCompleteException;
 import com.rpzjava.sqbe.services.NewPostService;
 import com.rpzjava.sqbe.utils.ResultUtils;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class PostController {
 
-    private final IPostDao iPostDao;
+    private final IPostDAO iPostDao;
     private final NewPostService newPostService;
 
     public PostController(
-            IPostDao iPostDao, NewPostService newPostService) {
+            IPostDAO iPostDao, NewPostService newPostService) {
         this.iPostDao = iPostDao;
         this.newPostService = newPostService;
     }

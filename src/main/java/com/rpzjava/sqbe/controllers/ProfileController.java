@@ -2,7 +2,7 @@ package com.rpzjava.sqbe.controllers;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.rpzjava.sqbe.daos.IProfileDao;
+import com.rpzjava.sqbe.daos.IProfileDAO;
 import com.rpzjava.sqbe.daos.IUserDAO;
 import com.rpzjava.sqbe.entities.pojos.UserEntity;
 import com.rpzjava.sqbe.entities.pojos.UserProfile;
@@ -17,12 +17,12 @@ import java.util.Optional;
 @Slf4j
 public class ProfileController {
 
-    private final IProfileDao iProfileDao;
+    private final IProfileDAO iProfileDao;
     private final IUserDAO iUserDAO;
     private final UpdateProfileService updateProfileService;
 
     public ProfileController(
-            IProfileDao iProfileDao,
+            IProfileDAO iProfileDao,
             IUserDAO iUserDAO,
             UpdateProfileService updateProfileService
     ) {

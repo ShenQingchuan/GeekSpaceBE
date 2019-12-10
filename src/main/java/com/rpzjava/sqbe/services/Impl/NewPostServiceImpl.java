@@ -1,30 +1,31 @@
-package com.rpzjava.sqbe.services;
+package com.rpzjava.sqbe.services.Impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rpzjava.sqbe.beans.TagFromReqBody;
-import com.rpzjava.sqbe.daos.IPostDao;
+import com.rpzjava.sqbe.daos.IPostDAO;
 import com.rpzjava.sqbe.daos.ITagDAO;
 import com.rpzjava.sqbe.daos.IUserDAO;
 import com.rpzjava.sqbe.entities.pojos.Post;
 import com.rpzjava.sqbe.entities.pojos.Tag;
 import com.rpzjava.sqbe.entities.pojos.UserEntity;
 import com.rpzjava.sqbe.exceptions.PostDataNotCompleteException;
+import com.rpzjava.sqbe.services.NewPostService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.beans.Transient;
+import java.util.*;
 
 @Service
 public class NewPostServiceImpl implements NewPostService {
 
     private final IUserDAO iUserDAO;
-    private final IPostDao iPostDao;
+    private final IPostDAO iPostDao;
     private final ITagDAO iTagDAO;
 
     public NewPostServiceImpl(
             IUserDAO iUserDAO,
-            IPostDao iPostDao,
+            IPostDAO iPostDao,
             ITagDAO iTagDAO
     ) {
         this.iUserDAO = iUserDAO;
@@ -65,23 +66,25 @@ public class NewPostServiceImpl implements NewPostService {
             post.setSource(source);
 
             // 遍历标签数组
-            List<TagFromReqBody> tagList = tags.toJavaList(TagFromReqBody.class);
+            List<String> tagList = tags.toJavaList(String.class);
+
             tagList.forEach(tag -> {
                 Tag newTag = new Tag();
-                newTag.setName(tag.getTagName());
+
+                newTag.setName(tag);
 
                 // 若该标签在标签表中找不到，就新建保存它
                 // 因为实现查了存在性，所以之后添加不会发生 DataIntegrityViolationException 字段插入重复的错误
-                Optional<Tag> findingTag = iTagDAO.findByName(tag.getTagName());
+                Optional<Tag> findingTag = iTagDAO.findByName(tag);
                 if (!findingTag.isPresent()) {
-                    newTag = iTagDAO.saveAndFlush(newTag);
+                    iTagDAO.saveAndFlush(newTag);
                 }
-
                 post.getTagSet().add(newTag);
             });
 
             iPostDao.save(post);
             return true;
+
         }
         return false;
     }

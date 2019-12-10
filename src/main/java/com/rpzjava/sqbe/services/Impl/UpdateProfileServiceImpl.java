@@ -1,8 +1,9 @@
-package com.rpzjava.sqbe.services;
+package com.rpzjava.sqbe.services.Impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.rpzjava.sqbe.entities.pojos.UserEntity;
 import com.rpzjava.sqbe.entities.pojos.UserProfile;
+import com.rpzjava.sqbe.services.UpdateProfileService;
 import org.springframework.stereotype.Service;
 
 @Service

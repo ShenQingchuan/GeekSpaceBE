@@ -55,7 +55,7 @@ public class UserController {
         userProfile.setBio("这个人好懒，什么也没留下！");
         userEntity.setUserProfile(userProfile);
         // 新增用户 这里调用 Spring Data JPA 自带方法进行新增
-        UserEntity save = iUserDAO.save(userEntity);
+        iUserDAO.save(userEntity);
         // 如果不等于 null 返回我们刚刚定义好的工具类
         log.info("成功添加一名用户: " + "<" + sicnuid + ">.");
         return ResultUtils.success("注册成功!");
