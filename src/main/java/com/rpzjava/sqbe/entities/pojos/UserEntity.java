@@ -1,5 +1,6 @@
 package com.rpzjava.sqbe.entities.pojos;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class UserEntity implements Serializable {
     String sicnuid;
 
     @Column(nullable = false)
+    @JSONField(serialize = false)
     String password;
 
     @OneToOne(cascade = CascadeType.ALL)

@@ -5,6 +5,6 @@ import com.rpzjava.sqbe.exceptions.PostDataNotCompleteException;
 
 public interface NewPostService {
 
-    Boolean newPost(JSONObject reqBody, Long uid) throws PostDataNotCompleteException;
+    Boolean newPost(JSONObject reqBody) throws PostDataNotCompleteException;
 
 }

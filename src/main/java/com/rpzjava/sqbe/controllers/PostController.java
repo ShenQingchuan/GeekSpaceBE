@@ -28,9 +28,8 @@ public class PostController {
     @PostMapping("/")
     public Object savePost(@RequestBody JSONObject reqBody) {
 
-        Long uid = reqBody.getLong("uid");
         try {
-            if (!newPostService.newPost(reqBody, uid)) {
+            if (!newPostService.newPost(reqBody)) {
                 ResultUtils.error("发帖失败，发帖用户UID不存在！");
             }
         } catch (PostDataNotCompleteException e) {

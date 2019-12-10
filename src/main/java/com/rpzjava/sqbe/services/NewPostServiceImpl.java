@@ -4,13 +4,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rpzjava.sqbe.beans.TagFromReqBody;
 import com.rpzjava.sqbe.daos.IPostDao;
-import com.rpzjava.sqbe.daos.IPostTagsRelDAO;
 import com.rpzjava.sqbe.daos.ITagDAO;
 import com.rpzjava.sqbe.daos.IUserDAO;
 import com.rpzjava.sqbe.entities.pojos.Post;
 import com.rpzjava.sqbe.entities.pojos.Tag;
 import com.rpzjava.sqbe.entities.pojos.UserEntity;
-import com.rpzjava.sqbe.entities.relationships.PostTagsRel;
 import com.rpzjava.sqbe.exceptions.PostDataNotCompleteException;
 import org.springframework.stereotype.Service;
 
@@ -23,22 +21,27 @@ public class NewPostServiceImpl implements NewPostService {
     private final IUserDAO iUserDAO;
     private final IPostDao iPostDao;
     private final ITagDAO iTagDAO;
-    private final IPostTagsRelDAO iPostTagsRelDAO;
 
     public NewPostServiceImpl(
             IUserDAO iUserDAO,
             IPostDao iPostDao,
-            ITagDAO iTagDAO, IPostTagsRelDAO iPostTagsRelDAO
+            ITagDAO iTagDAO
     ) {
         this.iUserDAO = iUserDAO;
         this.iPostDao = iPostDao;
         this.iTagDAO = iTagDAO;
-        this.iPostTagsRelDAO = iPostTagsRelDAO;
     }
 
+    /**
+     * 新建极客空间论坛帖子
+     * @param reqBody 提交新建帖子的请求体
+     * @return Boolean 本次新建Service执行成功与否
+     * @throws PostDataNotCompleteException 可能请求体字段不全
+     */
     @Override
-    public Boolean newPost(JSONObject reqBody, Long uid) throws PostDataNotCompleteException {
+    public Boolean newPost(JSONObject reqBody) throws PostDataNotCompleteException {
 
+        Long uid = reqBody.getLong("uid");
         Optional<UserEntity> findingUser = iUserDAO.findByUid(uid);
 
         // 本方法的返回值 Boolean 值决定于 此 Optional<UserEntity> 是否为空：
@@ -68,16 +71,13 @@ public class NewPostServiceImpl implements NewPostService {
                 newTag.setName(tag.getTagName());
 
                 // 若该标签在标签表中找不到，就新建保存它
+                // 因为实现查了存在性，所以之后添加不会发生 DataIntegrityViolationException 字段插入重复的错误
                 Optional<Tag> findingTag = iTagDAO.findByName(tag.getTagName());
                 if (!findingTag.isPresent()) {
-                    iTagDAO.save(newTag);
+                    newTag = iTagDAO.saveAndFlush(newTag);
                 }
 
-                // 保存新的 帖子与标签的关系
-                PostTagsRel newPostTagsRel = new PostTagsRel();
-                newPostTagsRel.setPostId(post.getId());
-                newPostTagsRel.setTagId(newTag.getId());
-                iPostTagsRelDAO.save(newPostTagsRel);
+                post.getTagSet().add(newTag);
             });
 
             iPostDao.save(post);
