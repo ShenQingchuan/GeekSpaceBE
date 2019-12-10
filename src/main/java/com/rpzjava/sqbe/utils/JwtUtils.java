@@ -1,6 +1,6 @@
 package com.rpzjava.sqbe.utils;
 
-import com.rpzjava.sqbe.entities.UserEntity;
+import com.rpzjava.sqbe.entities.pojos.UserEntity;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 

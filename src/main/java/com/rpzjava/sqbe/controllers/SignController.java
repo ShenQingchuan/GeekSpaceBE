@@ -3,7 +3,7 @@ package com.rpzjava.sqbe.controllers;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rpzjava.sqbe.daos.IUserDAO;
-import com.rpzjava.sqbe.entities.UserEntity;
+import com.rpzjava.sqbe.entities.pojos.UserEntity;
 import com.rpzjava.sqbe.utils.JwtUtils;
 import com.rpzjava.sqbe.utils.RedisUtils;
 import com.rpzjava.sqbe.utils.ResultUtils;
@@ -77,6 +77,7 @@ public class SignController {
             for (Cookie c : cookies) {
                 if (c.getName().equals("gssq_token")) { //找到 Token Cookie
                     if (redisUtils.hasKey(c.getValue())) {
+                        log.info("用户 uid: " + redisUtils.get(c.getValue()) + " 退出登录...");
                         redisUtils.remove(c.getValue());
                         break;
                     }

@@ -1,4 +1,4 @@
-package com.rpzjava.sqbe.entities;
+package com.rpzjava.sqbe.entities.pojos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 
+@Table(name = "sqbe_profile")
 @Entity
-@Table(name = "sqbe_user_profile")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

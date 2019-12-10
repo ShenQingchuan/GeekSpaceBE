@@ -27,9 +27,8 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
     private final RedisUtils redisUtils;
     private final String[] whiteList = new String[]{
             "/user/", "/user/all", "/user/*",
-            "/login","/release/save","/release/display",
-            "/update/static_data","/update/dynamic_data"
-};
+            "/login",
+    };
 
     public WebSecurityConfig(RedisUtils redisUtils) {
         this.redisUtils = redisUtils;

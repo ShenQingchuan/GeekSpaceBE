@@ -1,6 +1,6 @@
 package com.rpzjava.sqbe.daos;
 
-import com.rpzjava.sqbe.entities.UserEntity;
+import com.rpzjava.sqbe.entities.pojos.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;

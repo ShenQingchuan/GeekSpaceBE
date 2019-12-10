@@ -1,4 +1,4 @@
-package com.rpzjava.sqbe.entities;
+package com.rpzjava.sqbe.entities.pojos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

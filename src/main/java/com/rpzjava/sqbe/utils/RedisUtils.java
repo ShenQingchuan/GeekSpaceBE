@@ -26,6 +26,15 @@ public class RedisUtils {
     }
 
     /**
+     * 普通缓存获取
+     * @param key 键
+     * @return 值
+     */
+    public Object get(String key) {
+        return key == null ? null : redisTemplate.opsForValue().get(key);
+    }
+
+    /**
      * redis存入数据和设置缓存时间
      *
      * @param key   键
@@ -38,7 +47,6 @@ public class RedisUtils {
 
     /**
      * redis根据key删除值
-     *
      * @param key   键
      */
     public void remove(String key) {

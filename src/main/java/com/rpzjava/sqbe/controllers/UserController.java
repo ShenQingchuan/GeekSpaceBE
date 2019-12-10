@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rpzjava.sqbe.daos.IUserDAO;
-import com.rpzjava.sqbe.entities.UserEntity;
-import com.rpzjava.sqbe.entities.UserProfile;
+import com.rpzjava.sqbe.entities.pojos.UserEntity;
+import com.rpzjava.sqbe.entities.pojos.UserProfile;
 import com.rpzjava.sqbe.utils.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.DigestUtils;
@@ -57,12 +57,9 @@ public class UserController {
         // 新增用户 这里调用 Spring Data JPA 自带方法进行新增
         UserEntity save = iUserDAO.save(userEntity);
         // 如果不等于 null 返回我们刚刚定义好的工具类
-        if (save != null) {
-            log.info("成功添加一名用户: " + "<" + sicnuid + ">.");
-            return ResultUtils.success("注册成功!");
-        }
+        log.info("成功添加一名用户: " + "<" + sicnuid + ">.");
+        return ResultUtils.success("注册成功!");
 
-        return ResultUtils.error("操作失败!");
     }
 
     /**
