@@ -1,11 +1,16 @@
 package com.rpzjava.sqbe;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.rpzjava.sqbe.beans.EditPostType;
 import com.rpzjava.sqbe.daos.IPostDao;
 import com.rpzjava.sqbe.daos.ITagDAO;
 import com.rpzjava.sqbe.daos.IUserDAO;
 import com.rpzjava.sqbe.entities.pojos.Post;
 import com.rpzjava.sqbe.entities.pojos.Tag;
+import com.rpzjava.sqbe.exceptions.PostDataNotCompleteException;
+import com.rpzjava.sqbe.services.EditPostService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +23,7 @@ import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-class SqbeApplicationTests {
+class PostUnitTest {
 
     @Autowired
     ITagDAO iTagDAO;
@@ -26,8 +31,10 @@ class SqbeApplicationTests {
     IUserDAO iUserDAO;
     @Autowired
     IPostDao iPostDao;
+    @Autowired
+    EditPostService editPostService;
 
-    @Deprecated  // 此测试已经做过
+    @Deprecated // 此测试已经做过 passed? : yes
     @Test
     void testPostAddTagsNotRepeat() {
 
@@ -83,9 +90,32 @@ class SqbeApplicationTests {
 
     }
 
-    @Test void testGetPostTags() {
+    @Deprecated // 此测试已经做过 passed? : yes
+    @Test
+    void testGetPostTags() {
         Optional<Post> findingPost = iPostDao.findById(1L);
         findingPost.ifPresent(post -> System.out.println(JSON.toJSONString(post)));
+    }
+
+    @Deprecated //  此测试已经做过 passed? : yes
+    @Test
+    void testSaveDraft() {
+        JSONObject fakeReqBody = new JSONObject();
+        fakeReqBody.put("uid", 1L);
+        fakeReqBody.put("title", "测试保存草稿帖");
+        fakeReqBody.put("source", "**打草稿是个好习惯，凡事都要三思而后行。**");
+        fakeReqBody.put("content", "<p><strong>打草稿是个好习惯，凡事都要三思而后行。</strong></p>\n");
+
+        JSONArray fakeTags = new JSONArray();
+        fakeTags.add("Flutter");
+        fakeTags.add("云计算");
+        fakeReqBody.put("tags", fakeTags);
+
+        try {
+            editPostService.newEdit(fakeReqBody, EditPostType.DRAFT);
+        } catch (PostDataNotCompleteException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 }

@@ -2,9 +2,10 @@ package com.rpzjava.sqbe.controllers;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.rpzjava.sqbe.beans.EditPostType;
 import com.rpzjava.sqbe.daos.IPostDao;
 import com.rpzjava.sqbe.exceptions.PostDataNotCompleteException;
-import com.rpzjava.sqbe.services.NewPostService;
+import com.rpzjava.sqbe.services.EditPostService;
 import com.rpzjava.sqbe.utils.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -17,19 +18,19 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     private final IPostDao iPostDao;
-    private final NewPostService newPostService;
+    private final EditPostService editPostService;
 
     public PostController(
-            IPostDao iPostDao, NewPostService newPostService) {
+            IPostDao iPostDao, EditPostService editPostService) {
         this.iPostDao = iPostDao;
-        this.newPostService = newPostService;
+        this.editPostService = editPostService;
     }
 
     @PostMapping("/")
     public Object savePost(@RequestBody JSONObject reqBody) {
 
         try {
-            if (!newPostService.newPost(reqBody)) {
+            if (!editPostService.newEdit(reqBody, EditPostType.POST)) {
                 ResultUtils.error("发帖失败，发帖用户UID不存在！");
             }
         } catch (PostDataNotCompleteException e) {
