@@ -19,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Post extends PostBase implements Serializable {
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(name = "sqbe_rel_post_tags",
         joinColumns = @JoinColumn(name = "post_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id"))

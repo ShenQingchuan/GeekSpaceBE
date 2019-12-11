@@ -1,6 +1,7 @@
 package com.rpzjava.sqbe.entities.pojos;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -38,9 +39,12 @@ public class PostBase {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date updateTime;    // 修改时间
 
+    int status = 1;             // 帖子/草稿 状态
+
     @OneToOne
     @JoinColumn(name = "sender", referencedColumnName = "uid")
     @JSONField(serialize = false)
+    @JsonIgnore
     UserEntity sender;          // 发送者
 
 }

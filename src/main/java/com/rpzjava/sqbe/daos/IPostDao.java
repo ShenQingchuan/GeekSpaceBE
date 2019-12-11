@@ -11,6 +11,7 @@ public interface IPostDao extends JpaRepository<Post, Long> {
 
     @Override
     Optional<Post> findById(Long pid);
-    Page<Post> findAll(Pageable pageable);
+
+    Page<Post> findAllByStatus(int status, Pageable pageable);
 
 }

@@ -56,7 +56,7 @@ class PostUnitTest {
 
         // 新建两个标签
         Tag tag1 = new Tag();
-        tag1.setName("云计算");
+        tag1.setName("算法");
         Tag tag2 = new Tag();
         tag2.setName("Linux");
         // 测试标签是要存进数据库的
@@ -71,7 +71,7 @@ class PostUnitTest {
 
         // 制造一个重复的样例
         Tag tag3 = new Tag();
-        tag3.setName("云计算");
+        tag3.setName("算法");
 
         // 添加进 post
         post.getTagSet().add(tag1);
