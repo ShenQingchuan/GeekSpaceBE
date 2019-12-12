@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rpzjava.sqbe.daos.IProfileDao;
 import com.rpzjava.sqbe.daos.IUserDAO;
-import com.rpzjava.sqbe.entities.pojos.UserEntity;
-import com.rpzjava.sqbe.entities.pojos.UserProfile;
+import com.rpzjava.sqbe.entities.UserEntity;
+import com.rpzjava.sqbe.entities.UserProfile;
 import com.rpzjava.sqbe.services.UpdateProfileService;
 import com.rpzjava.sqbe.utils.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class ProfileController {
             @PathVariable String id) {
 
         long uid = Long.parseLong(id);
-        Optional<UserEntity> userEntity = iUserDAO.findByUid(uid);
+        Optional<UserEntity> userEntity = iUserDAO.findById(uid);
         if (userEntity.isPresent()) {
             iUserDAO.save(updateProfileService.viaRequest(userEntity.get(), reqBody));
             return ResultUtils.success("修改 uid: " + uid + "成功！");

@@ -1,6 +1,6 @@
 package com.rpzjava.sqbe.daos;
 
-import com.rpzjava.sqbe.entities.pojos.Tag;
+import com.rpzjava.sqbe.entities.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

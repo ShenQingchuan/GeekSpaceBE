@@ -5,8 +5,8 @@ import com.rpzjava.sqbe.beans.EditPostType;
 import com.rpzjava.sqbe.beans.ExecuteResult;
 import com.rpzjava.sqbe.daos.IDraftDAO;
 import com.rpzjava.sqbe.daos.IUserDAO;
-import com.rpzjava.sqbe.entities.pojos.Draft;
-import com.rpzjava.sqbe.entities.pojos.UserEntity;
+import com.rpzjava.sqbe.entities.Draft;
+import com.rpzjava.sqbe.entities.UserEntity;
 import com.rpzjava.sqbe.exceptions.PostDataNotCompleteException;
 import com.rpzjava.sqbe.services.EditPostService;
 import com.rpzjava.sqbe.utils.ResultUtils;
@@ -64,7 +64,7 @@ public class DraftController {
     @GetMapping("/{id}")
     public Object getDraftByUid(@PathVariable String id) {
         long uid = Long.parseLong(id);
-        Optional<UserEntity> findingUser = iUserDAO.findByUid(uid);
+        Optional<UserEntity> findingUser = iUserDAO.findById(uid);
         if (findingUser.isPresent()) {
             List<Draft> draftList = iDraftDAO.findBySender(findingUser.get());
             if (draftList.size() > 0) {

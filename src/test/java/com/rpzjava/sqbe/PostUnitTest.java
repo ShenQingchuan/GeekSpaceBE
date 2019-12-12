@@ -7,8 +7,8 @@ import com.rpzjava.sqbe.beans.EditPostType;
 import com.rpzjava.sqbe.daos.IPostDao;
 import com.rpzjava.sqbe.daos.ITagDAO;
 import com.rpzjava.sqbe.daos.IUserDAO;
-import com.rpzjava.sqbe.entities.pojos.Post;
-import com.rpzjava.sqbe.entities.pojos.Tag;
+import com.rpzjava.sqbe.entities.Post;
+import com.rpzjava.sqbe.entities.Tag;
 import com.rpzjava.sqbe.exceptions.PostDataNotCompleteException;
 import com.rpzjava.sqbe.services.EditPostService;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class PostUnitTest {
         Post post = new Post();
         try {
             // 测试是 UID 000001 唐梦予发帖
-            post.setSender(iUserDAO.findByUid(1L).orElseThrow(Exception::new));
+            post.setSender(iUserDAO.findById(1L).orElseThrow(Exception::new));
             post.setTitle("测试帖子");
             post.setSource("# 在这里开始写帖子内容吧！\n快来极客社区和我们一起玩耍吧！");
             post.setContent("<h1><a id=\"_0\"></a>在这里开始写帖子内容吧！</h1>\n<p>快来极客社区和我们一起玩耍吧！</p>\n");

@@ -8,7 +8,7 @@ import com.rpzjava.sqbe.daos.IDraftDAO;
 import com.rpzjava.sqbe.daos.IPostDao;
 import com.rpzjava.sqbe.daos.ITagDAO;
 import com.rpzjava.sqbe.daos.IUserDAO;
-import com.rpzjava.sqbe.entities.pojos.*;
+import com.rpzjava.sqbe.entities.*;
 import com.rpzjava.sqbe.exceptions.PostDataNotCompleteException;
 import com.rpzjava.sqbe.services.EditPostService;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,7 @@ public class EditPostServiceImpl implements EditPostService {
 
         ExecuteResult editResult = new ExecuteResult();
         Long uid = reqBody.getLong("uid");
-        Optional<UserEntity> findingUser = iUserDAO.findByUid(uid);
+        Optional<UserEntity> findingUser = iUserDAO.findById(uid);
 
         // 提交用户不存在则直接拒绝
         if (findingUser.isPresent()) {
@@ -63,7 +63,7 @@ public class EditPostServiceImpl implements EditPostService {
             if (title != null && content != null && source != null && tags.size() > 0) {
                 String cover = reqBody.getString("cover");
 
-                ExecuteResult saveResult = saveNewEditing(type, findingUser.get(), title, cover, tags, source, content);
+                ExecuteResult saveResult = saveNewEditing(reqBody, type, findingUser.get(), title, cover, tags, source, content);
                 editResult.setStatus(saveResult.getStatus());
                 editResult.setPayload(saveResult.getPayload());
             } else throw new PostDataNotCompleteException();
@@ -81,7 +81,7 @@ public class EditPostServiceImpl implements EditPostService {
 
         ExecuteResult rewriteResult = new ExecuteResult();
         Long uid = reqBody.getLong("uid");
-        Optional<UserEntity> findingUser = iUserDAO.findByUid(uid);
+        Optional<UserEntity> findingUser = iUserDAO.findById(uid);
 
         // 提交用户不存在则直接拒绝
         if (findingUser.isPresent()) {
@@ -149,6 +149,7 @@ public class EditPostServiceImpl implements EditPostService {
     /**
      * 执行编辑帖子保存
      *
+     * @param reqBody 为了获取可能的：从草稿继续编辑后完成的帖子，保存帖子则自动删除草稿
      * @param type    编辑帖子的类型（保存并发表 or 保存草稿）
      * @param sender  帖子发送用户
      * @param title   帖子标题
@@ -158,7 +159,7 @@ public class EditPostServiceImpl implements EditPostService {
      * @param content 帖子html渲染结果
      */
     private ExecuteResult saveNewEditing(
-            EditPostType type, UserEntity sender, String title,
+            JSONObject reqBody, EditPostType type, UserEntity sender, String title,
             String cover, JSONArray tags, String source, String content
     ) {
         ExecuteResult saveResult = new ExecuteResult();
@@ -181,9 +182,13 @@ public class EditPostServiceImpl implements EditPostService {
                     Tag newTag = new Tag();
                     newTag.setName(tag);
                     iTagDAO.saveAndFlush(newTag);
-                } else {
-                    // 根据编辑帖子的类型（是直接发表？还是编辑草稿？）
-                    // 添加帖子的标签
+                    if (type == EditPostType.POST) {
+                        ((Post) postBase).getTagSet().add(newTag);
+                    } else {
+                        ((Draft) postBase).getTagSet().add(newTag);
+                    }
+                }
+                else {
                     if (type == EditPostType.POST) {
                         ((Post) postBase).getTagSet().add(findingTag.get());
                     } else {
@@ -194,6 +199,12 @@ public class EditPostServiceImpl implements EditPostService {
 
             if (type == EditPostType.POST) {
                 iPostDao.saveAndFlush((Post) postBase);
+
+                // 若是从草稿继续编辑完成的，根据提交的草稿号删除草稿
+                Long fromDraftId = reqBody.getLong("draft");
+                if (fromDraftId != null && iDraftDAO.findById(fromDraftId).isPresent()) {
+                    iDraftDAO.deleteById(fromDraftId);
+                }
             } else {
                 iDraftDAO.saveAndFlush((Draft) postBase);
             }

@@ -1,6 +1,5 @@
-package com.rpzjava.sqbe.entities.pojos;
+package com.rpzjava.sqbe.entities;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

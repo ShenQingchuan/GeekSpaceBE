@@ -1,6 +1,6 @@
 package com.rpzjava.sqbe.daos;
 
-import com.rpzjava.sqbe.entities.pojos.UserProfile;
+import com.rpzjava.sqbe.entities.UserProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

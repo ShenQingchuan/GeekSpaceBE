@@ -3,7 +3,7 @@ package com.rpzjava.sqbe.controllers;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rpzjava.sqbe.daos.IUserDAO;
-import com.rpzjava.sqbe.entities.pojos.UserEntity;
+import com.rpzjava.sqbe.entities.UserEntity;
 import com.rpzjava.sqbe.utils.JwtUtils;
 import com.rpzjava.sqbe.utils.RedisUtils;
 import com.rpzjava.sqbe.utils.ResultUtils;
@@ -49,7 +49,7 @@ public class SignController {
 
                 String token = JwtUtils.genJsonWebToken(userEntitySrc.get()); // 得到 Token
                 // 登录成功后 把token放到Redis Key 存 token ，value 存用户sicnuid
-                redisUtils.set(token, userEntitySrc.get().getUid().toString(), JwtUtils.TOKEN_EXPIRE_TIME);
+                redisUtils.set(token, userEntitySrc.get().getId().toString(), JwtUtils.TOKEN_EXPIRE_TIME);
 
                 //登陆成功后 把token和真实姓名返回
                 Map<String, Object> map = new HashMap<>();

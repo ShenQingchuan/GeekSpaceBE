@@ -27,6 +27,19 @@ public class PostController {
         this.editPostService = editPostService;
     }
 
+    @PutMapping("/")
+    public Object updatePost(@RequestBody JSONObject reqBody) {
+        try {
+            ExecuteResult rewriteResult = editPostService.updateEdit(reqBody, EditPostType.POST);
+            if (!rewriteResult.getStatus()) {
+                ResultUtils.error("修改帖子失败！" + rewriteResult.getPayload().toString());
+            }
+        } catch (PostDataNotCompleteException e) {
+            return ResultUtils.error("修改帖子失败，提交的数据字段不完整");
+        }
+        return ResultUtils.success("修改帖子成功！");
+    }
+
     @PostMapping("/")
     public Object savePost(@RequestBody JSONObject reqBody) {
 
