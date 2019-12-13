@@ -1,6 +1,6 @@
 package com.rpzjava.sqbe.utils;
 
-import com.rpzjava.sqbe.entities.pojos.UserEntity;
+import com.rpzjava.sqbe.entities.UserEntity;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -22,7 +22,7 @@ public class JwtUtils {
         if (userEntity != null) {
             token = Jwts.builder()
                     .setSubject(SUBJECT)//发行者
-                    .claim("uid", userEntity.getUid())
+                    .claim("uid", userEntity.getId())
                     .claim("sicnuid", userEntity.getSicnuid())
                     .setIssuedAt(new Date())//发行日期
                     .signWith(SignatureAlgorithm.HS256, APPSECRET).compact();//签名

@@ -1,5 +1,6 @@
 package com.rpzjava.sqbe.configs;
 
+import com.alibaba.fastjson.JSONObject;
 import com.rpzjava.sqbe.utils.JwtUtils;
 import com.rpzjava.sqbe.utils.RedisUtils;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,10 +27,12 @@ import java.util.List;
 public class WebSecurityConfig extends WebMvcConfigurationSupport {
 
     private final RedisUtils redisUtils;
-    private final String[] whiteList = new String[]{
-            "/user/", "/user/all", "/user/*",
-            "/login",
+    private final String[] allWhiteList = new String[] {
+            "/user/", "/user/all", "/user/*", "/login"
     };
+    private final List<String> getWhiteList = Arrays.asList(
+            "/post/", "/hello"
+    );
 
     public WebSecurityConfig(RedisUtils redisUtils) {
         this.redisUtils = redisUtils;
@@ -51,7 +55,7 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
         InterceptorRegistration addInterceptor = registry.addInterceptor(getSecurityInterceptor());
 
         List<String> passList = new ArrayList<>();
-        Collections.addAll(passList, whiteList);
+        Collections.addAll(passList, allWhiteList);
         addInterceptor.excludePathPatterns(passList);
         addInterceptor.addPathPatterns("/**");//拦截其他所有请求
 
@@ -63,8 +67,14 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
          */
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+            // 在 GET 请求的白名单中
+            if (request.getMethod().equals("GET") && getWhiteList.contains(request.getRequestURI())) {
+                return true;
+            }
+
             ServletOutputStream out = response.getOutputStream();//创建一个输出流
             OutputStreamWriter ow = new OutputStreamWriter(out, StandardCharsets.UTF_8);//设置编码格式,防止汉字乱码
+            JSONObject interceptorRes = new JSONObject();
 
             Cookie[] cookies = request.getCookies();//获取 Token
             if (request.getCookies() != null) {
@@ -74,7 +84,8 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
                             redisUtils.expire(c.getValue(), JwtUtils.TOKEN_EXPIRE_TIME); //如果 Token 存在 重新刷新过期时间 并放行
                             return true;
                         } else {
-                            ow.write("token is invalid!");//要返回的信息
+                            interceptorRes.put("msg", "token 不正确!");
+                            ow.write(interceptorRes.toJSONString());//要返回的信息
                             ow.flush();//冲刷出流，将所有缓冲的数据发送到目的地
                             ow.close();//关闭流
                             return false;
@@ -84,7 +95,8 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
             }
 
             // 遍历完毕也没找到则报空
-            ow.write("token is empty, please sign in!");//要返回的信息
+            interceptorRes.put("msg", "token 为空, 请先登录!");
+            ow.write(interceptorRes.toJSONString());//要返回的信息
             ow.flush();//冲刷出流，将所有缓冲的数据发送到目的地
             ow.close();//关闭流
             return false;//拦截

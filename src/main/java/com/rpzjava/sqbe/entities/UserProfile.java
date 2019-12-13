@@ -1,22 +1,20 @@
-package com.rpzjava.sqbe.entities.pojos;
+package com.rpzjava.sqbe.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "sqbe_profile")
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfile implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;                  // 用户详细信息记录的主键
+public class UserProfile extends BaseEntity implements Serializable {
 
     String trueName;            // 用户真实姓名
     String nickName;            // 用户在社区的昵称
