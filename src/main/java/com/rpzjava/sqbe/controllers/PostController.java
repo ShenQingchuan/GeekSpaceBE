@@ -11,6 +11,7 @@ import com.rpzjava.sqbe.utils.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -55,9 +56,9 @@ public class PostController {
         return ResultUtils.success("发帖成功");
     }
 
-    @GetMapping("/") //按分页（每页10个）所有帖子数据信息
-    public Object getPost(@RequestParam String page) {
-        Pageable pageable = PageRequest.of(Integer.parseInt(page), 10);
+    @GetMapping("/latest") //按分页（每页10个）所有帖子数据信息
+    public Object getLatestPost(@RequestParam String page) {
+        Pageable pageable = PageRequest.of(Integer.parseInt(page), 10, Sort.by("createTime").descending());
         return ResultUtils.success(
                 JSON.toJSON(iPostDao.findAllByStatus(1, pageable).getContent()),
                 "获取帖子成功！"

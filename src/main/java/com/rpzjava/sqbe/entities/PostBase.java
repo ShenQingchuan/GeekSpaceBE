@@ -30,8 +30,6 @@ public class PostBase extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "sender", referencedColumnName = "id")
-    @JSONField(serialize = false)
-    @JsonIgnore
     UserEntity sender;          // 发送者
 
 }

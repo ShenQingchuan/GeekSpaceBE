@@ -1,6 +1,7 @@
 package com.rpzjava.sqbe.entities;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,6 +23,7 @@ public class UserEntity extends BaseEntity implements Serializable {
 
     @Column(nullable = false)
     @JSONField(serialize = false)
+    @JsonIgnore
     String password;
 
     @OneToOne(cascade = CascadeType.ALL)
