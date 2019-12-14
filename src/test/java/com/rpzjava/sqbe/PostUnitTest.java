@@ -18,8 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -34,7 +33,7 @@ class PostUnitTest {
     @Autowired
     EditPostService editPostService;
 
-    @Deprecated // 此测试已经做过 passed? : yes
+    // 此测试已经做过 passed? : yes
     @Test
     void testPostAddTagsNotRepeat() {
 
@@ -90,14 +89,14 @@ class PostUnitTest {
 
     }
 
-    @Deprecated // 此测试已经做过 passed? : yes
+    // 此测试已经做过 passed? : yes
     @Test
     void testGetPostTags() {
         Optional<Post> findingPost = iPostDao.findById(1L);
         findingPost.ifPresent(post -> System.out.println(JSON.toJSONString(post)));
     }
 
-    @Deprecated //  此测试已经做过 passed? : yes
+    //  此测试已经做过 passed? : yes
     @Test
     void testSaveDraft() {
         JSONObject fakeReqBody = new JSONObject();
@@ -116,6 +115,19 @@ class PostUnitTest {
         } catch (PostDataNotCompleteException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    // 测试结果：从获取的数据中 通过 FastJSON 解构
+    @Test
+    void testCountTagByPost() {
+        List<Map<String, Object>> tagUsedCounts = iPostDao.countTagByPost();
+        System.out.println(JSON.toJSON(tagUsedCounts));
+    }
+
+    @Test
+    void testGetPostsByTag() {
+        List<Post> post = iPostDao.dragPostsByTag("赛哥");
+        System.out.println(JSON.toJSON(post));
     }
 
 }

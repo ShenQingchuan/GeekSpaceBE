@@ -3,6 +3,7 @@ package com.rpzjava.sqbe.controllers;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rpzjava.sqbe.beans.EditPostType;
+import com.rpzjava.sqbe.beans.EntityStatus;
 import com.rpzjava.sqbe.beans.ExecuteResult;
 import com.rpzjava.sqbe.daos.IPostDao;
 import com.rpzjava.sqbe.exceptions.PostDataNotCompleteException;
@@ -60,9 +61,14 @@ public class PostController {
     public Object getLatestPost(@RequestParam String page) {
         Pageable pageable = PageRequest.of(Integer.parseInt(page), 10, Sort.by("createTime").descending());
         return ResultUtils.success(
-                JSON.toJSON(iPostDao.findAllByStatus(1, pageable).getContent()),
+                JSON.toJSON(iPostDao.findAllByStatus(EntityStatus.NORMAL, pageable).getContent()),
                 "获取帖子成功！"
         );
+    }
+
+    @GetMapping("/byTag/{tagName}")
+    public Object getPostWithParams(@PathVariable String tagName) {
+        return ResultUtils.success(iPostDao.dragPostsByTag(tagName), "获取 tag: " + tagName + "标签下的帖子成功！");
     }
 
 }

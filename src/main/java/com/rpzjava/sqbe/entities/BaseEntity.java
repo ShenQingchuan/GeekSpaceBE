@@ -1,5 +1,6 @@
 package com.rpzjava.sqbe.entities;
 
+import com.rpzjava.sqbe.beans.EntityStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,6 @@ public class BaseEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date updateTime;    // 修改时间
 
-    int status = 1;             // 数据记录状态 默认为1表示存在
+    EntityStatus status = EntityStatus.NORMAL;    // 数据记录状态 默认为1表示存在
 
 }
