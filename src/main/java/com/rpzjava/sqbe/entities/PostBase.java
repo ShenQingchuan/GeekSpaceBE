@@ -19,7 +19,7 @@ public class PostBase extends BaseEntity {
     @Column(nullable = false)
     String title;               // 帖子标题
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     String source;              // 帖子源内容 mdValue
 
     @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
