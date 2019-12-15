@@ -2,8 +2,9 @@ package com.rpzjava.sqbe.services.impls;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.rpzjava.sqbe.beans.EditPostType;
-import com.rpzjava.sqbe.beans.ExecuteResult;
+import com.rpzjava.sqbe.dtos.PostBaseDTO;
+import com.rpzjava.sqbe.tools.EditPostType;
+import com.rpzjava.sqbe.tools.ExecuteResult;
 import com.rpzjava.sqbe.daos.IDraftDAO;
 import com.rpzjava.sqbe.daos.IPostDao;
 import com.rpzjava.sqbe.daos.ITagDAO;
@@ -54,20 +55,17 @@ public class EditPostServiceImpl implements EditPostService {
 
         // 提交用户不存在则直接拒绝
         if (findingUser.isPresent()) {
-            String title = reqBody.getString("title");
-            JSONArray tags = reqBody.getJSONArray("tags");
-            String source = reqBody.getString("source");
-            String content = reqBody.getString("content");
+            PostBaseDTO postBaseDTO = new PostBaseDTO(
+                    reqBody.getString("title"),
+                    reqBody.getJSONArray("tags"),
+                    reqBody.getString("source"),
+                    reqBody.getString("content"),
+                    reqBody.getString("cover")
+            );
 
-            // 验证此四样条件，确认必填字段完整
-            if (title != null && content != null && source != null && tags.size() > 0) {
-                String cover = reqBody.getString("cover");
-
-                ExecuteResult saveResult = saveNewEditing(reqBody, type, findingUser.get(), title, cover, tags, source, content);
-                editResult.setStatus(saveResult.getStatus());
-                editResult.setPayload(saveResult.getPayload());
-            } else throw new PostDataNotCompleteException();
-
+            ExecuteResult saveResult = saveNewEditing(reqBody, type, findingUser.get(), postBaseDTO);
+            editResult.setStatus(saveResult.getStatus());
+            editResult.setPayload(saveResult.getPayload());
         } else {
             editResult.setStatus(false);
             editResult.setPayload("没有找到该用户 (uid: " + uid + ")");
@@ -104,8 +102,7 @@ public class EditPostServiceImpl implements EditPostService {
                         // TODO: 发布者修改已经发布过的帖子
                         rewriteResult.setStatus(true);
                     }
-                }
-                else {
+                } else {
                     Optional<Draft> findingDraft = iDraftDAO.findById(id);
                     if (findingDraft.isPresent()) {
                         Draft reDraft = findingDraft.get();
@@ -135,10 +132,8 @@ public class EditPostServiceImpl implements EditPostService {
                         rewriteResult.setStatus(true);
                     }
                 }
-            }
-            else throw new PostDataNotCompleteException();
-        }
-        else {
+            } else throw new PostDataNotCompleteException();
+        } else {
             rewriteResult.setStatus(false);
             rewriteResult.setPayload("发帖用户UID不存在。");
         }
@@ -149,31 +144,29 @@ public class EditPostServiceImpl implements EditPostService {
     /**
      * 执行编辑帖子保存
      *
-     * @param reqBody 为了获取可能的：从草稿继续编辑后完成的帖子，保存帖子则自动删除草稿
-     * @param type    编辑帖子的类型（保存并发表 or 保存草稿）
-     * @param sender  帖子发送用户
-     * @param title   帖子标题
-     * @param cover   帖子封面图网络地址
-     * @param tags    帖子标签JSON数组
-     * @param source  帖子markdown源内容
-     * @param content 帖子html渲染结果
+     * @param reqBody     为了获取可能的：从草稿继续编辑后完成的帖子，保存帖子则自动删除草稿
+     * @param type        编辑帖子的类型（保存并发表 or 保存草稿）
+     * @param sender      帖子发送用户
+     * @param postBaseDTO 帖子数据表单传输类
      */
     private ExecuteResult saveNewEditing(
-            JSONObject reqBody, EditPostType type, UserEntity sender, String title,
-            String cover, JSONArray tags, String source, String content
+            JSONObject reqBody,
+            EditPostType type,
+            UserEntity sender,
+            PostBaseDTO postBaseDTO
     ) {
         ExecuteResult saveResult = new ExecuteResult();
         try {
             // 设置 post 帖子实体类对象实例的基本字段
             PostBase postBase = type == EditPostType.POST ? new Post() : new Draft();
             postBase.setSender(sender);
-            postBase.setContent(content);
-            postBase.setTitle(title);
-            postBase.setCoverUrl(cover);
-            postBase.setSource(source);
+            postBase.setTitle(postBaseDTO.getTitle());
+            postBase.setCoverUrl(postBaseDTO.getCover());
+            postBase.setSource(postBaseDTO.getSource());
+            postBase.setContent(postBaseDTO.getContent());
 
             // 遍历标签数组
-            List<String> tagList = tags.toJavaList(String.class);
+            List<String> tagList = postBaseDTO.getTags().toJavaList(String.class);
             tagList.forEach(tag -> {
                 // 若该标签在标签表中找不到，就新建保存它
                 // 因为实现查了存在性，所以之后添加不会发生 DataIntegrityViolationException 字段插入重复的错误
@@ -187,8 +180,7 @@ public class EditPostServiceImpl implements EditPostService {
                     } else {
                         ((Draft) postBase).getTagSet().add(newTag);
                     }
-                }
-                else {
+                } else {
                     if (type == EditPostType.POST) {
                         ((Post) postBase).getTagSet().add(findingTag.get());
                     } else {

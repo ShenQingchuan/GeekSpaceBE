@@ -3,7 +3,7 @@ package com.rpzjava.sqbe;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.rpzjava.sqbe.beans.EditPostType;
+import com.rpzjava.sqbe.tools.EditPostType;
 import com.rpzjava.sqbe.daos.IPostDao;
 import com.rpzjava.sqbe.daos.ITagDAO;
 import com.rpzjava.sqbe.daos.IUserDAO;

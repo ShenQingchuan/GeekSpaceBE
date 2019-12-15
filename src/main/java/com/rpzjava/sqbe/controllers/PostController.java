@@ -2,9 +2,10 @@ package com.rpzjava.sqbe.controllers;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.rpzjava.sqbe.beans.EditPostType;
-import com.rpzjava.sqbe.beans.EntityStatus;
-import com.rpzjava.sqbe.beans.ExecuteResult;
+import com.rpzjava.sqbe.entities.Post;
+import com.rpzjava.sqbe.tools.EditPostType;
+import com.rpzjava.sqbe.tools.EntityStatus;
+import com.rpzjava.sqbe.tools.ExecuteResult;
 import com.rpzjava.sqbe.daos.IPostDao;
 import com.rpzjava.sqbe.exceptions.PostDataNotCompleteException;
 import com.rpzjava.sqbe.services.EditPostService;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/post")
@@ -69,6 +72,15 @@ public class PostController {
     @GetMapping("/byTag/{tagName}")
     public Object getPostWithParams(@PathVariable String tagName) {
         return ResultUtils.success(iPostDao.dragPostsByTag(tagName), "获取 tag: " + tagName + "标签下的帖子成功！");
+    }
+
+    @GetMapping("/{postId}")
+    public Object getPostById(@PathVariable String postId) {
+        Long pid = Long.parseLong(postId);
+        Optional<Post> findingPost = iPostDao.findById(pid);
+        return findingPost.map(post -> ResultUtils.success(JSON.toJSON(post),
+                "获取 id: " + postId + "的帖子成功！")).orElseGet(
+                () -> ResultUtils.error("获取 id: " + postId + "的帖子不存在！"));
     }
 
 }
