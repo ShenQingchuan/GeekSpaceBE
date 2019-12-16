@@ -40,10 +40,10 @@ public class ProfileController {
         Optional<UserEntity> userEntity = iUserDAO.findById(uid);
         if (userEntity.isPresent()) {
             iUserDAO.save(updateProfileService.viaRequest(userEntity.get(), reqBody));
-            return ResultUtils.success("修改 uid: " + uid + "成功！");
+            return ResultUtils.success("修改 uid: " + uid + " 用户资料成功！");
         }
 
-        return ResultUtils.error("修改 uid: " + uid + "失败！");
+        return ResultUtils.error("修改 uid: " + uid + " 用户资料失败！");
     }
 
 

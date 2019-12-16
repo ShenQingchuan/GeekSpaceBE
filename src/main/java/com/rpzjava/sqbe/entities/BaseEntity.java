@@ -1,6 +1,6 @@
 package com.rpzjava.sqbe.entities;
 
-import com.rpzjava.sqbe.beans.EntityStatus;
+import com.rpzjava.sqbe.tools.EntityStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

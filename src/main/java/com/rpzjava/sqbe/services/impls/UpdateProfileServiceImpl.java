@@ -13,7 +13,7 @@ public class UpdateProfileServiceImpl implements UpdateProfileService {
     public UserEntity viaRequest(UserEntity userEntity, JSONObject reqBody) {
         UserProfile profile = userEntity.getUserProfile();
         profile.setBio(reqBody.get("bio").toString());
-        profile.setNickName(reqBody.get("nick_name").toString());
+        profile.setNickName(reqBody.get("nickName").toString());
         profile.setSex(Integer.parseInt(reqBody.get("sex").toString()));
         profile.setAvatarUrl(reqBody.get("avatarUrl").toString());
         userEntity.setUserProfile(profile);
