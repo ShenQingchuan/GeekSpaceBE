@@ -130,4 +130,9 @@ class PostUnitTest {
         System.out.println(JSON.toJSON(post));
     }
 
+    @Test
+    void testCountPosts() {
+        System.out.println(iPostDao.count());
+    }
+
 }
