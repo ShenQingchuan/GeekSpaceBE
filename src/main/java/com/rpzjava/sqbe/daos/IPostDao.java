@@ -1,6 +1,6 @@
 package com.rpzjava.sqbe.daos;
 
-import com.rpzjava.sqbe.beans.EntityStatus;
+import com.rpzjava.sqbe.tools.EntityStatus;
 import com.rpzjava.sqbe.entities.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,4 +1,4 @@
-package com.rpzjava.sqbe.beans;
+package com.rpzjava.sqbe.tools;
 
 public enum EditPostType {
     POST, DRAFT

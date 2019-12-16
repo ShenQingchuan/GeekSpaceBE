@@ -1,8 +1,8 @@
 package com.rpzjava.sqbe.controllers;
 
 import com.alibaba.fastjson.JSONObject;
-import com.rpzjava.sqbe.beans.EditPostType;
-import com.rpzjava.sqbe.beans.ExecuteResult;
+import com.rpzjava.sqbe.tools.EditPostType;
+import com.rpzjava.sqbe.tools.ExecuteResult;
 import com.rpzjava.sqbe.daos.IDraftDAO;
 import com.rpzjava.sqbe.daos.IUserDAO;
 import com.rpzjava.sqbe.entities.Draft;

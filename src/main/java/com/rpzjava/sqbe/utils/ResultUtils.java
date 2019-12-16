@@ -55,7 +55,7 @@ public class ResultUtils {
         return result;
     }
 
-    public static Object error(String msg, String errCode) {
+    public static Object error(String msg, Long errCode) {
         Result result = new Result();
         result.setState(false);
         result.setMsg(msg);
@@ -68,6 +68,6 @@ public class ResultUtils {
         private boolean state;//返回状态
         private Object data;//返回数据
         private String msg;//返回信息
-        private String errCode;//错误代码
+        private Long errCode;//错误代码
     }
 }

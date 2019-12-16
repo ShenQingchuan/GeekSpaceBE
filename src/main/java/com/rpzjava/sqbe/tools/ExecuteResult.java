@@ -1,4 +1,4 @@
-package com.rpzjava.sqbe.beans;
+package com.rpzjava.sqbe.tools;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
