@@ -34,7 +34,8 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
             "/post/*"
     };
     private final List<String> getWhiteList = Arrays.asList(
-            "/post/latest", "/hello", "/tag/withPostCount"
+            "/post/latest", "/hello", "/tag/withPostCount",
+            "/post/pagination"
     );
 
     public WebSecurityConfig(RedisUtils redisUtils) {

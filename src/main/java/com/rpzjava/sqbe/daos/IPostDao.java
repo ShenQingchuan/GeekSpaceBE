@@ -47,4 +47,6 @@ public interface IPostDao extends JpaRepository<Post, Long> {
     @Query("update Post set status = 0 where id = :id")
     void deleteById(Long id);
 
+    @Override
+    long count();
 }
