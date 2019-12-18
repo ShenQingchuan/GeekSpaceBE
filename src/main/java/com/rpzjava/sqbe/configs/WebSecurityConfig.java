@@ -31,7 +31,7 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
     private final RedisUtils redisUtils;
     private final String[] allWhiteList = new String[] {
             "/user/", "/user/all", "/user/*", "/login",
-            "/post/*"
+            "/post/*", "/comment/*",
     };
     private final List<String> getWhiteList = Arrays.asList(
             "/post/latest", "/hello", "/tag/withPostCount",
@@ -87,7 +87,7 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
                             redisUtils.expire(c.getValue(), JwtUtils.TOKEN_EXPIRE_TIME); //如果 Token 存在 重新刷新过期时间 并放行
                             return true;
                         } else {
-                            ow.write(JSON.toJSONString(ResultUtils.error("token token 不正确!", 99401L)));
+                            ow.write(JSON.toJSONString(ResultUtils.error("token 不正确!", 99401L)));
                             ow.flush();//冲刷出流，将所有缓冲的数据发送到目的地
                             ow.close();//关闭流
                             return false;
