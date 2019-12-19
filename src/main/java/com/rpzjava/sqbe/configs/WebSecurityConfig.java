@@ -31,7 +31,8 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
     private final RedisUtils redisUtils;
     private final String[] allWhiteList = new String[] {
             "/user/", "/user/all", "/user/*", "/login",
-            "/post/*", "/comment/*",
+            "/post/*", "/post/byTag/*",
+            "/comment/*",
     };
     private final List<String> getWhiteList = Arrays.asList(
             "/post/latest", "/hello", "/tag/withPostCount",

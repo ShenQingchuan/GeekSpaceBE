@@ -5,10 +5,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "sqbe_post_comment")
@@ -26,4 +25,11 @@ public class PostComment extends MarkdownBase {
     @JoinColumn(name = "sender", referencedColumnName = "id")
     UserEntity sender;          // 此条回复消息 的发送者
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(name = "sqbe_rel_comment_reply", joinColumns = {
+        @JoinColumn(name = "comment_id", referencedColumnName = "id")
+    }, inverseJoinColumns = {
+        @JoinColumn(name = "reply_id", referencedColumnName = "id")
+    })
+    Set<Reply> replySet = new HashSet<>();
 }

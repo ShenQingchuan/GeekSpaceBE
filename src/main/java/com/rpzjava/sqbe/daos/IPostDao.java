@@ -21,6 +21,8 @@ public interface IPostDao extends JpaRepository<Post, Long> {
     @Override
     Optional<Post> findById(Long pid);
 
+    Optional<Post> findByIdAndStatus(Long id, EntityStatus status);
+
     @Query("select p from Post p join p.tagSet t where t.name = :name")
     List<Post> dragPostsByTag(String name);
 

@@ -7,6 +7,7 @@ import com.rpzjava.sqbe.daos.IUserDAO;
 import com.rpzjava.sqbe.entities.Post;
 import com.rpzjava.sqbe.entities.PostComment;
 import com.rpzjava.sqbe.entities.UserEntity;
+import com.rpzjava.sqbe.tools.EntityStatus;
 import com.rpzjava.sqbe.utils.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +36,8 @@ public class CommentController {
         String source = reqBody.getString("source");
         String content = reqBody.getString("content");
 
-        Optional<Post> findingPost = iPostDao.findById(postId);
-        Optional<UserEntity> findingUser = iUserDAO.findById(sender);
+        Optional<Post> findingPost = iPostDao.findByIdAndStatus(postId, EntityStatus.NORMAL);
+        Optional<UserEntity> findingUser = iUserDAO.findByIdAndStatus(sender, EntityStatus.NORMAL);
         if (!findingPost.isPresent()) {
             return ResultUtils.error("该帖子不存在！", 88404L);
         }
@@ -54,7 +55,7 @@ public class CommentController {
 
     @GetMapping("/{postId}")
     public Object getCommentsByPostId(@PathVariable Long postId) {
-        Optional<Post> findingPost = iPostDao.findById(postId);
+        Optional<Post> findingPost = iPostDao.findByIdAndStatus(postId, EntityStatus.NORMAL);
         if (!findingPost.isPresent()) {
             return ResultUtils.error("该帖子不存在！", 88404L);
         }

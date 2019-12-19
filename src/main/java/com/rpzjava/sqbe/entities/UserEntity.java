@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity extends BaseEntity implements Serializable {
+public class UserEntity extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     String sicnuid;
