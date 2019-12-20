@@ -27,9 +27,9 @@ public class PostComment extends MarkdownBase {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(name = "sqbe_rel_comment_reply", joinColumns = {
-        @JoinColumn(name = "comment_id", referencedColumnName = "id")
+            @JoinColumn(name = "comment_id", referencedColumnName = "id")
     }, inverseJoinColumns = {
-        @JoinColumn(name = "reply_id", referencedColumnName = "id")
+            @JoinColumn(name = "reply_id", referencedColumnName = "id")
     })
     Set<Reply> replySet = new HashSet<>();
 }

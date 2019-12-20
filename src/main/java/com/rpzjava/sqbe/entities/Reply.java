@@ -21,4 +21,8 @@ public class Reply extends MarkdownBase {
 
     String target;
 
+    @OneToOne
+    @JoinColumn(name = "mention")
+    UserEntity mention;
+
 }
