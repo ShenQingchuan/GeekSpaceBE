@@ -10,6 +10,10 @@ import com.rpzjava.sqbe.entities.UserEntity;
 import com.rpzjava.sqbe.tools.EntityStatus;
 import com.rpzjava.sqbe.utils.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +27,8 @@ public class CommentController {
     private final IPostDao iPostDao;
     private final IPostCommentDAO iPostCommentDAO;
     private final IUserDAO iUserDAO;
+
+    private static final int PAGE_SIZE = 10;
 
     public CommentController(IPostDao iPostDao, IPostCommentDAO iPostCommentDAO, IUserDAO iUserDAO) {
         this.iPostDao = iPostDao;
@@ -54,13 +60,31 @@ public class CommentController {
     }
 
     @GetMapping("/{postId}")
-    public Object getCommentsByPostId(@PathVariable Long postId) {
+    public Object getCommentsByPostIdWithPage(@PathVariable Long postId, @RequestParam("page") Integer page) {
         Optional<Post> findingPost = iPostDao.findByIdAndStatus(postId, EntityStatus.NORMAL);
         if (!findingPost.isPresent()) {
             return ResultUtils.error("该帖子不存在！", 88404L);
         }
-        List<PostComment> comments = iPostCommentDAO.findByPost(findingPost.get());
-        return ResultUtils.success(comments, "获取帖子 id: " + postId +"评论成功！");
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createTime").descending());
+        Page<PostComment> comments = iPostCommentDAO
+                .findAllByPostAndStatus(findingPost.get(), EntityStatus.NORMAL, pageable);
+        return ResultUtils.success(comments.getContent(), "获取帖子 id: " + postId + "评论成功！");
+    }
+
+    @GetMapping("/pagination/{postId}")
+    public Object getCommentCountByPostId(@PathVariable Long postId) {
+        Optional<Post> findingPost = iPostDao.findByIdAndStatus(postId, EntityStatus.NORMAL);
+        if (!findingPost.isPresent()) {
+            return ResultUtils.error("该帖子不存在！", 88404L);
+        }
+        long allCount = iPostCommentDAO.countByPostAndStatus(findingPost.get(), EntityStatus.NORMAL);
+        long pagination = allCount / PAGE_SIZE;
+        if (allCount % PAGE_SIZE != 0) {
+            pagination += 1;
+        }
+        JSONObject result = new JSONObject();
+        result.put("pagination", pagination);
+        return ResultUtils.success(result, "成功获取 id: " + postId + " 的帖子的评论页数");
     }
 
 }

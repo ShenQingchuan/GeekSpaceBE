@@ -32,10 +32,11 @@ public class ReplyServiceImpl implements ReplyService {
 
     /**
      * 添加新的回复
-     * @param commentId     回复所属评论的
-     * @param reqBody       回复的 POST HTTP 请求体
-     * @param targetType    回复的类型：'to comment' or 'to reply'
-     * @return              返回 ResultUtils.success or .error
+     *
+     * @param commentId  回复所属评论的
+     * @param reqBody    回复的 POST HTTP 请求体
+     * @param targetType 回复的类型：'to comment' or 'to reply'
+     * @return 返回 ResultUtils.success or .error
      */
     @Override
     public Object newReply(Long commentId, JSONObject reqBody, String targetType) {
@@ -65,6 +66,9 @@ public class ReplyServiceImpl implements ReplyService {
 
         // 若是 reply to reply 则还要保存 @提到了回复目标项的发送者
         if (targetType.equals("comment")) { // reply to comment
+            // 那就将 @ 目标指向该帖子的发送者，以此为凭据发送消息
+            reply.setMention(findingComment.get().getSender());
+            reply = iReplyDAO.saveAndFlush(reply);
             return ResultUtils.success(reply, "回复成功！");
         } else {    // reply to reply
             Long targetSenderUid = reqBody.getJSONObject("to")
@@ -75,6 +79,7 @@ public class ReplyServiceImpl implements ReplyService {
             if (!findingTargetSender.isPresent()) {
                 return ResultUtils.error("回复发送用户不存在", 79404L);
             }
+            // mention 指向回复的发送者
             reply.setMention(findingTargetSender.get());
             reply = iReplyDAO.saveAndFlush(reply);
             return ResultUtils.success(reply,

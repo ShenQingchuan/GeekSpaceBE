@@ -38,7 +38,9 @@ public interface IPostDao extends JpaRepository<Post, Long> {
      * 查询标签的引用量（该标签下有多少帖子）用于标签云
      * @return 返回一个 元素为 { id, name, "count" } 的结果集
      */
-    @Query(value = "select id, `name`, count(rel.tag_id) as \"count\" from sqbe_tags as t LEFT JOIN sqbe_rel_post_tags as rel on t.id=rel.tag_id GROUP BY t.id", nativeQuery = true)
+    @Query(value = "select id, `name`, count(rel.tag_id) as \"count\" " +
+            "from sqbe_tags as t LEFT JOIN sqbe_rel_post_tags as rel " +
+            "on t.id=rel.tag_id GROUP BY t.id", nativeQuery = true)
     List<Map<String, Object>> countTagByPost();
 
     /**

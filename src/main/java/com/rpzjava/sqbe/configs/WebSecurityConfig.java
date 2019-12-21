@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebMvcConfigurationSupport {
     private final String[] allWhiteList = new String[] {
             "/user/", "/user/all", "/user/*", "/login",
             "/post/*", "/post/byTag/*",
-            "/comment/*",
+            "/comment/*", "/comment/pagination/*",
     };
     private final List<String> getWhiteList = Arrays.asList(
             "/post/latest", "/hello", "/tag/withPostCount",

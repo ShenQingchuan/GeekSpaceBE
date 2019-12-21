@@ -63,10 +63,10 @@ public class PostController {
     }
 
     @GetMapping("/latest") //按分页（每页10个）所有帖子数据信息
-    public Object getLatestPost(@RequestParam(name = "page") String page) {
-        Pageable pageable = PageRequest.of(Integer.parseInt(page), PAGE_SIZE, Sort.by("createTime").descending());
+    public Object getLatestPost(@RequestParam(name = "page") Integer page) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createTime").descending());
         return ResultUtils.success(
-                JSON.toJSON(iPostDao.findAllByStatus(EntityStatus.NORMAL, pageable).getContent()),
+                iPostDao.findAllByStatus(EntityStatus.NORMAL, pageable).getContent(),
                 "获取帖子成功！"
         );
     }
@@ -87,8 +87,9 @@ public class PostController {
 
     @GetMapping("/pagination")
     public Object getPagination() {
-        long pagination = iPostDao.count() / PAGE_SIZE;
-        if (iPostDao.count() % PAGE_SIZE != 0) {
+        long allCount = iPostDao.count();
+        long pagination = allCount / PAGE_SIZE;
+        if (allCount % PAGE_SIZE != 0) {
             pagination += 1;
         }
         JSONObject result = new JSONObject();
